@@ -103,7 +103,7 @@ app.get('/photos.json', function(req, res) {
   getProtectedResource('/types/photos?near=37.47,-122.26&within=10', 
                         req.session, function(err, body) {
     var photos = JSON.parse(body);
-    res.json({"link":photos[0].data.link});
+    res.json({"link":photos[0].oembed.url});
   });
 });
 
