@@ -34,14 +34,16 @@ $(function() {
       });
    });
 
-   function getPhotos() {
-      $.getJSON(photosUrl, function(js) {
-        console.log('inside');
-        console.log(js);
-        $('#photos').append('<img id="theImg" src="'+js.link+'" />')
+  function getPhotos() {
+    $.getJSON(photosUrl, function(js) {
+        var links = JSON.parse(js).links;
+        links.forEach(function(link) {
+          $('#photos').append('<img src="'+link+'" />')
+        });
       })
       .error(function (err) {
-         console.log(err);
+        console.log('err');
+        console.log(err);
       });
    }
 

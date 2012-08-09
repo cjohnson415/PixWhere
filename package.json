@@ -1,5 +1,5 @@
 {
-   "name": "nodejs_express_skeleton",
+   "name": "PixWhere",
    "version": "0.0.1",
    "dependencies": {
       "ejs": "*",

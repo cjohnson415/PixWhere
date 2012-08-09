@@ -5,6 +5,7 @@ var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
 var OAuth2 = require('oauth').OAuth2;
+var async = require('async');
 
 // The port that this express app will listen on
 var port = 8043;
@@ -23,17 +24,6 @@ var usedServices = [
    'Facebook',
    'foursquare',
    'Instagram',
-   'Tumblr',
-   'Twitter',
-   'LinkedIn',
-   'FitBit',
-   'WordPress',
-   'GContacts',
-   'GitHub',
-   'Gmail',
-   'Dropbox',
-   'Google',
-   'RunKeeper'
 ];
 
 var oa = new OAuth2(clientId, clientSecret, apiBaseUrl);
@@ -99,11 +89,21 @@ app.configure('production', function() {
 app.set('view engine', 'ejs');
 
 app.get('/photos.json', function(req, res) {
-  console.log('inside server');
   getProtectedResource('/types/photos?near=37.47,-122.26&within=10', 
                         req.session, function(err, body) {
+    if (err) console.log(err);
     var photos = JSON.parse(body);
-    res.json({"link":photos[0].oembed.url});
+
+console.log(photos);
+
+    var photoLinks = [];
+    async.forEach(photos, function(photo, cb) {
+        photoLinks.push(photo.oembed.url);
+        cb(); //TODO: add error handling
+      }, function(err) {
+        res.json(JSON.stringify({links: photoLinks}));
+      }
+    );
   });
 });
 
@@ -124,17 +124,6 @@ app.get('/', function(req, res) {
     services: services,
     session: req.session
   });
-});
-
-// this is experimental so you can ignore it, see https://singly.com/write
-app.get('/apiauth', function(req, res) {
-  if(!req.session || !req.session.profiles) return res.send("not logged in, temp dead end, TODO",400);
-   res.render('apiauth', {
-     callback: req.query.callback,
-     account: req.session.profiles.id,
-     validation: require('crypto').createHash('md5').update(clientSecret+req.session.profiles.id).digest('hex'),
-     session: req.session
-   });
 });
 
 app.get('/callback', function(req, res) {
