@@ -10,8 +10,8 @@ var OAuth2 = require('oauth').OAuth2;
 var port = 8043;
 
 // Your client ID and secret from http://dev.singly.com/apps
-var clientId = process.argv[2] || '';
-var clientSecret = process.argv[3] || '';
+var clientId = process.argv[2] || 'dc2dff4e9e5afe66f384eaaf2fc78070';
+var clientSecret = process.argv[3] || 'ae3997b5d3ab0207e5756e3fd689d8b0';
 
 var hostBaseUrl = process.argv[4] || 'http://localhost:' + port;
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
@@ -83,7 +83,7 @@ app.configure(function() {
 });
 
 // We want exceptions and stracktraces in development
-app.configure('development', function() {
+app.configure('development', function(req, res) {
   app.use(express.errorHandler({
     dumpExceptions: true,
     showStack: true
@@ -97,6 +97,16 @@ app.configure('production', function() {
 
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');
+
+
+app.get('/data', function(req, res) {
+  getProtectedResource('/types/photos?near=37.47,-122.26&within=10', req.session, function (err, body) {
+    var photos = JSON.parse(body); 
+    console.log(photos[0].data.link);
+    $('#photos').prepend('<img id="theImg" src="'+photos[0].data.link+'" />')
+    res.redirect('/');
+  });  
+});
 
 app.get('/', function(req, res) {
   var i;

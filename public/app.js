@@ -39,4 +39,10 @@ $(function() {
          $('#twitter').append(sprintf('<li><strong>Tweet:</strong> %s</li>', tweet.data.text));
       });
    });
+ 
+  singly.get('/types/photos?near=37.47,-122.26&within=10', null, function (photos) {
+    console.log(photos[0].data.link);
+      $('#photos').append('<img id="theImg" src="'+photos[0].data.link+'" />')
+    });  
+  });
 });
