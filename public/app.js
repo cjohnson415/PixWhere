@@ -1,5 +1,6 @@
 // The URL of the Singly API endpoint
 var apiBaseUrl = 'https://api.singly.com';
+var photosUrl = 'http://localhost:8043/photos.json';
 
 // A small wrapper for getting data from the Singly API
 var singly = {
@@ -33,16 +34,19 @@ $(function() {
       });
    });
 
-   // Get the 5 latest items from the user's Twitter feed
-   singly.get('/services/twitter/timeline', { limit: 5 }, function(tweets) {
-      _.each(tweets, function(tweet) {
-         $('#twitter').append(sprintf('<li><strong>Tweet:</strong> %s</li>', tweet.data.text));
+   function getPhotos() {
+      $.getJSON(photosUrl, function(js) {
+        console.log('inside');
+        console.log(js);
+        $('#photos').append('<img id="theImg" src="'+js.link+'" />')
+      })
+      .error(function (err) {
+         console.log(err);
       });
-   });
- 
-  singly.get('/types/photos?near=37.47,-122.26&within=10', null, function (photos) {
-    console.log(photos[0].data.link);
-      $('#photos').append('<img id="theImg" src="'+photos[0].data.link+'" />')
-    });  
-  });
+   }
+
+  $('#get').click(function () {
+    console.log('getting photos');
+    getPhotos();
+  }); 
 });

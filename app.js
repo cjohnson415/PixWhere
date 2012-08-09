@@ -98,14 +98,13 @@ app.configure('production', function() {
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');
 
-
-app.get('/data', function(req, res) {
-  getProtectedResource('/types/photos?near=37.47,-122.26&within=10', req.session, function (err, body) {
-    var photos = JSON.parse(body); 
-    console.log(photos[0].data.link);
-    $('#photos').prepend('<img id="theImg" src="'+photos[0].data.link+'" />')
-    res.redirect('/');
-  });  
+app.get('/photos.json', function(req, res) {
+  console.log('inside server');
+  getProtectedResource('/types/photos?near=37.47,-122.26&within=10', 
+                        req.session, function(err, body) {
+    var photos = JSON.parse(body);
+    res.json({"link":photos[0].data.link});
+  });
 });
 
 app.get('/', function(req, res) {
